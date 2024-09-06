@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 from textwrap import dedent
 
@@ -248,3 +249,46 @@ async def test_recursive_git_repositories(temp_testbed, mock_collect_user_input)
     await session.stream.recv(channel="client_exit")
 
     assert set(session.ctx.code_context.include_files.keys()) == set(files)
+
+
+@pytest.mark.asyncio
+async def test_symlink_handling(mock_call_llm_api, mock_collect_user_input):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        file_path = temp_dir_path / "file.txt"
+        symlink_path = temp_dir_path / "symlink.txt"
+        
+        # Create a regular file
+        with open(file_path, "w") as f:
+            f.write("This is a test file.")
+        
+        # Create a symlink to the regular file
+        os.symlink(file_path, symlink_path)
+        
+        # Test the function that should handle symlinks
+        paths = get_paths_for_directory(temp_dir_path)
+        
+        # Assert that both the file and the symlink are included
+        assert file_path.resolve() in paths
+        assert symlink_path.resolve() in paths
+
+
+@pytest.mark.asyncio
+async def test_symlink_loop_handling(mock_call_llm_api, mock_collect_user_input):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        dir_path = temp_dir_path / "dir"
+        symlink_path = dir_path / "symlink"
+        
+        # Create a directory
+        os.mkdir(dir_path)
+        
+        # Create a symlink that points to its own parent directory (loop)
+        os.symlink(dir_path, symlink_path)
+        
+        # Test the function that should handle symlinks
+        paths = get_paths_for_directory(temp_dir_path)
+        
+        # Assert that the function does not enter an infinite loop
+        assert dir_path.resolve() in paths
+        assert symlink_path.resolve() not in paths  # Should not follow the loop
