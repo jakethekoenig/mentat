@@ -1,0 +1,43 @@
+<commands>
+    <setup>
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install -e .
+        pip install -r dev-requirements.txt
+    </setup>
+    <precommit>
+        ruff check --fix .
+        black --preview .
+        isort --profile black .
+        pyright
+        pytest
+    </precommit>
+    <tools>
+        pip install $NEW_DEPENDENCY
+        <comment>If you use this be sure to update requirements.txt</comment>
+        
+        pytest -k $TEST_NAME
+        <comment>Run a specific test or tests matching a pattern</comment>
+        
+        pytest -v -s
+        <comment>Run tests with verbose output and print statements</comment>
+        
+        black --preview --check .
+        <comment>Check if files are formatted correctly without making changes</comment>
+        
+        isort --profile black --check-only .
+        <comment>Check if imports are sorted correctly without making changes</comment>
+        
+        ruff check .
+        <comment>Run ruff linter without applying fixes</comment>
+        
+        python setup.py sdist bdist_wheel
+        <comment>Build distribution packages</comment>
+        
+        twine upload dist/*
+        <comment>Upload distribution packages to PyPI (make sure you have the credentials set up)</comment>
+        
+        mentat
+        <comment>Run mentat to test if it's working correctly</comment>
+    </tools>
+</commands>
