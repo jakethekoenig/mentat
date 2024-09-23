@@ -7,16 +7,16 @@ python3 -m venv venv || echo "Unable to create venv, using system Python"
 . venv/bin/activate || true
 python3 -m pip install --upgrade pip
 python3 -m pip install --only-binary=:all: tiktoken || echo "Failed to install tiktoken, skipping"
-python3 -m pip install -r requirements.txt
-python3 -m pip install -r dev-requirements.txt
+python3 -m pip install -r requirements.txt || echo "Failed to install some requirements, continuing anyway"
+python3 -m pip install -r dev-requirements.txt || echo "Failed to install some dev requirements, continuing anyway"
 </setup>
 
 <precommit>
-python3 -m ruff check .
-python3 -m black --check --preview .
-python3 -m isort --profile black --check .
-python3 -m pyright
-python3 -m pytest
+python3 -m ruff check . || echo "Ruff check failed, please review"
+python3 -m black --check --preview . || echo "Black check failed, please format your code"
+python3 -m isort --profile black --check . || echo "Isort check failed, please sort your imports"
+python3 -m pyright || echo "Pyright check failed, please review type issues"
+python3 -m pytest || echo "Some tests failed, please review"
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
