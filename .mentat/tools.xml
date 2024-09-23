@@ -1,0 +1,40 @@
+<commands>
+    <setup>
+        python -m venv venv
+        source venv/bin/activate
+        pip install -e .
+        pip install -r dev-requirements.txt
+    </setup>
+    <precommit>
+        ruff check --fix .
+        black --preview .
+        isort --profile black .
+        pyright
+        pytest
+    </precommit>
+    <tools>
+        pip install $NEW_DEPENDENCY
+        <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
+
+        pytest -k $TEST_NAME
+        <comment>Run a specific test or group of tests matching the given name.</comment>
+
+        pytest --cov=mentat
+        <comment>Run tests with coverage report for the mentat package.</comment>
+
+        black --check --preview .
+        <comment>Check if the code is formatted according to Black without making changes.</comment>
+
+        isort --profile black --check-only .
+        <comment>Check if imports are sorted correctly without making changes.</comment>
+
+        python setup.py sdist bdist_wheel
+        <comment>Build distribution packages for the project.</comment>
+
+        twine upload dist/*
+        <comment>Upload the built distribution packages to PyPI. Make sure you have the necessary credentials.</comment>
+
+        cd testbed && mentat
+        <comment>Run Mentat from the testbed directory to ensure it's working correctly when installed.</comment>
+    </tools>
+</commands>
