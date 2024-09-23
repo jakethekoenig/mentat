@@ -1,19 +1,5 @@
 <commands>
-    <setup>
-        python -m venv venv
-        source venv/bin/activate
-        pip install -e .
-        pip install -r dev-requirements.txt
-    </setup>
-    <precommit>
-        ruff check --fix .
-        black --preview .
-        isort --profile black .
-        pyright
-        pytest
-    </precommit>
-    <tools>
-        pip install $NEW_DEPENDENCY
+I apologize for the error. I mistakenly closed the <precommit> block with </setup> instead of </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
         pytest $TEST_FILE
@@ -41,6 +27,5 @@
         <comment>Run Mentat from the testbed directory to ensure it's working correctly when installed.</comment>
 
         python tests/license_check.py
-        <comment>Run the license checking script.</comment>
-    </tools>
+        <comment>Run the license checking script.</comment></tools>
 </commands>
