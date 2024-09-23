@@ -1,0 +1,40 @@
+<commands>
+<setup>
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+pip install -r dev-requirements.txt
+</setup>
+
+<precommit>
+ruff format .
+ruff check --fix .
+black --preview .
+isort .
+pyright
+pytest
+</precommit>
+
+<tools>
+pip install $NEW_DEPENDENCY
+<comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
+
+python setup.py sdist bdist_wheel
+<comment>Build distribution packages</comment>
+
+twine upload dist/*
+<comment>Upload packages to PyPI. Make sure you have the necessary credentials set up.</comment>
+
+pytest -k $TEST_NAME
+<comment>Run a specific test or group of tests</comment>
+
+pytest --cov=mentat
+<comment>Run tests with coverage report</comment>
+
+cd benchmarks && ./exercism_practice.py --max_iterations $NUM --max_workers $NUM --max_benchmarks $NUM --language $LANGUAGE
+<comment>Run benchmarks. Adjust parameters as needed.</comment>
+
+cd benchmarks && ./benchmark_runner.py --retries $NUM
+<comment>Run real-world benchmarks. Adjust retries as needed.</comment>
+</tools>
+</commands>
