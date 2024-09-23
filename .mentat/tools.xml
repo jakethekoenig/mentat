@@ -3,9 +3,11 @@
 
 <setup>
 python3 --version
-pip3 install --user -e .
+pip3 install --upgrade pip
+pip3 install --user -e . --no-build-isolation
 pip3 install --user -r dev-requirements.txt
 </setup>
+
 <precommit>
 python3 -m ruff check --fix .
 python3 -m black --preview .
