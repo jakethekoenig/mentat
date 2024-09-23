@@ -1,5 +1,20 @@
 <commands>
-I apologize for the error. I mistakenly closed the <precommit> block with </setup> instead of </precommit><tools>pip install $NEW_DEPENDENCY
+
+
+<setup>
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+</setup>
+
+<precommit>
+ruff check .
+black --check --preview .
+isort --profile black --check .
+pyright
+pytest
+</precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
         pytest $TEST_FILE
