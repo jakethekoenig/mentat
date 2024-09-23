@@ -1,36 +1,46 @@
 <commands>
 
 
-Here's the rewritten script with the proposed fix:
-
 <setup>
-# Check if Python 3.12 is available, otherwise use Python 3
-if command -v python3.12 &> /dev/null
+echo "Checking for Python 3..."
+if which python3 >/dev/null 2>&1
 then
-    PYTHON_CMD=python3.12
-else
     PYTHON_CMD=python3
+else
+    echo "Python 3 not found. Please install Python 3 and try again."
+    exit 1
 fi
 
-# Attempt to create the virtual environment
-$PYTHON_CMD -m venv .venv
+echo "Creating virtual environment..."
+if [ ! -d .venv ]
+then
+    $PYTHON_CMD -m venv .venv
+fi
 
-# Check if venv creation was successful
 if [ ! -f .venv/bin/activate ]
 then
     echo "Failed to create virtual environment. Please install python3-venv package and try again."
     exit 1
 fi
 
-source .venv/bin/activate
+echo "Activating virtual environment..."
+. .venv/bin/activate
+
+echo "Installing dependencies..."
 pip install -e .
 pip install -r dev-requirements.txt
 </setup>
+
 <precommit>
+echo "Running ruff..."
 ruff check --fix .
+echo "Running black..."
 black --preview .
+echo "Running isort..."
 isort .
+echo "Running pyright..."
 pyright
+echo "Running pytest..."
 pytest
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
