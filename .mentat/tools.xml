@@ -1,0 +1,32 @@
+<commands>
+    <setup>
+        pip install -r requirements.txt
+        pip install -r dev-requirements.txt
+    </setup>
+    <precommit>
+        ruff check --fix .
+        black --preview .
+        isort .
+        pyright
+        pytest
+    </precommit>
+    <tools>
+        pip install $NEW_DEPENDENCY
+        <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
+        
+        pytest -k $TEST_NAME
+        <comment>Run a specific test or group of tests</comment>
+        
+        pytest --cov=mentat
+        <comment>Run tests with coverage report</comment>
+        
+        python setup.py sdist bdist_wheel
+        <comment>Build distribution packages</comment>
+        
+        twine upload dist/*
+        <comment>Upload distribution packages to PyPI (ensure you have the necessary credentials)</comment>
+        
+        mentat
+        <comment>Run the Mentat CLI tool (useful for manual testing)</comment>
+    </tools>
+</commands>
