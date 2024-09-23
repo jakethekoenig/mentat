@@ -1,47 +1,31 @@
 <commands>
 
 
+Here's the rewritten script:
+
 <setup>
 echo "Checking for Python 3..."
-if which python3 >/dev/null 2>&1
-then
-    PYTHON_CMD=python3
-else
-    echo "Python 3 not found. Please install Python 3 and try again."
-    exit 1
-fi
-
+PYTHON_CMD=$(command -v python3) || { echo "Python 3 not found. Please install Python 3 and try again."; exit 1; }
 echo "Creating virtual environment..."
-if [ ! -d .venv ]
-then
-    $PYTHON_CMD -m venv .venv
-fi
-
-if [ ! -f .venv/bin/activate ]
-then
-    echo "Failed to create virtual environment. Please install python3-venv package and try again."
-    exit 1
-fi
-
+[ -d .venv ] || $PYTHON_CMD -m venv .venv || { echo "Failed to create virtual environment. Please install python3-venv package and try again."; exit 1; }
 echo "Activating virtual environment..."
-. .venv/bin/activate
-
+. .venv/bin/activate || { echo "Failed to activate virtual environment."; exit 1; }
 echo "Installing dependencies..."
-pip install -e .
-pip install -r dev-requirements.txt
+pip install -e . || { echo "Failed to install package in editable mode."; exit 1; }
+pip install -r dev-requirements.txt || { echo "Failed to install dev requirements."; exit 1; }
 </setup>
 
 <precommit>
 echo "Running ruff..."
-ruff check --fix .
+ruff check --fix . || { echo "Ruff check failed."; exit 1; }
 echo "Running black..."
-black --preview .
+black --preview . || { echo "Black formatting failed."; exit 1; }
 echo "Running isort..."
-isort .
+isort . || { echo "Isort failed."; exit 1; }
 echo "Running pyright..."
-pyright
+pyright || { echo "Pyright check failed."; exit 1; }
 echo "Running pytest..."
-pytest
+pytest || { echo "Pytest failed."; exit 1; }
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
         
