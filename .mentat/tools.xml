@@ -2,20 +2,19 @@
 
 
 <setup>
-python3 --version
-python3 -m venv venv
-. venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+python3.11 --version || python3.10 --version || python3 --version
+python3.11 -m venv venv || python3.10 -m venv venv || echo "Unable to create venv, using system Python"
+. venv/bin/activate || true
+python3 -m pip install --user --upgrade pip
+python3 -m pip install --user -r requirements.txt
+python3 -m pip install --user -r dev-requirements.txt
 </setup>
 <precommit>
-. venv/bin/activate
-ruff check .
-black --check --preview .
-isort --profile black --check .
-pyright
-pytest
+python3 -m ruff check .
+python3 -m black --check --preview .
+python3 -m isort --profile black --check .
+python3 -m pyright
+python3 -m pytest
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
