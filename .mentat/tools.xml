@@ -1,0 +1,34 @@
+<commands>
+    <setup>
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install -e .
+        pip install -r dev-requirements.txt
+    </setup>
+    <precommit>
+        ruff check --fix .
+        black --preview .
+        isort .
+        pyright
+        pytest
+    </precommit>
+    <tools>
+        pip install $NEW_DEPENDENCY
+        <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
+        
+        python setup.py sdist bdist_wheel
+        <comment>Build distribution packages</comment>
+        
+        twine upload dist/*
+        <comment>Upload packages to PyPI (requires twine to be installed and configured)</comment>
+        
+        python tests/license_check.py
+        <comment>Run license checking script</comment>
+        
+        cd benchmarks && ./exercism_practice.py --max_iterations $MAX_ITERATIONS --max_workers $MAX_WORKERS --max_benchmarks $MAX_BENCHMARKS --language $LANGUAGE
+        <comment>Run benchmarks for a specific language (e.g., javascript or python)</comment>
+        
+        cd benchmarks && ./benchmark_runner.py --retries $RETRIES
+        <comment>Run real-world benchmarks</comment>
+    </tools>
+</commands>
