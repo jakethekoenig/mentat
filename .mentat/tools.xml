@@ -1,17 +1,20 @@
 <commands>
-    <setup>
-        pip install -r requirements.txt
-        pip install -r dev-requirements.txt
-    </setup>
-    <precommit>
-        ruff check --fix .
-        black --preview .
-        isort .
-        pyright
-        pytest
-    </precommit>
-    <tools>
-        pip install $NEW_DEPENDENCY
+
+
+Here's the updated script:
+
+<setup>
+python -m pip install --upgrade pip
+pip install -r requirements.txt || echo "Error: Failed to install requirements. If the error mentions tiktoken or Rust, please install a Rust compiler and try again."
+pip install -r dev-requirements.txt || echo "Error: Failed to install dev requirements."
+</setup>
+<precommit>
+ruff check --fix .
+black --preview .
+isort .
+pyright
+pytest
+</precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
         
         pytest -k $TEST_NAME
@@ -27,6 +30,5 @@
         <comment>Upload distribution packages to PyPI (ensure you have the necessary credentials)</comment>
         
         mentat
-        <comment>Run the Mentat CLI tool (useful for manual testing)</comment>
-    </tools>
+        <comment>Run the Mentat CLI tool (useful for manual testing)</comment></tools>
 </commands>
