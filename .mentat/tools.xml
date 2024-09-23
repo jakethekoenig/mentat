@@ -1,26 +1,17 @@
 <commands>
-I apologize for the error in my previous response. Here's the corrected version with both <setup> and <precommit> blocks:
+
+
+Here's the corrected script:
 
 <setup>
 echo "Checking for Python 3..."
 python3 --version || { echo "Python 3 not found. Please install Python 3 and try again."; exit 1; }
-
 echo "Checking for venv module..."
-python3 -c "import venv" 2>/dev/null || {
-    echo "The venv module is not available. Please install it before proceeding."
-    echo "On Debian/Ubuntu: sudo apt install python3-venv"
-    echo "On Fedora: sudo dnf install python3-venv"
-    echo "On macOS: brew install python"
-    echo "On Windows: venv is included with Python 3.3+"
-    exit 1
-}
-
+python3 -c "import venv" 2>/dev/null || { echo "The venv module is not available. Please install it before proceeding."; echo "On Debian/Ubuntu: sudo apt install python3-venv"; echo "On Fedora: sudo dnf install python3-venv"; echo "On macOS: brew install python"; echo "On Windows: venv is included with Python 3.3+"; exit 1; }
 echo "Creating virtual environment..."
 python3 -m venv .venv || { echo "Failed to create virtual environment. Please check your Python installation."; exit 1; }
-
 echo "Activating virtual environment..."
 . .venv/bin/activate || { echo "Failed to activate virtual environment. Please check your shell and Python installation."; exit 1; }
-
 echo "Installing dependencies..."
 pip install -e . || { echo "Failed to install the project. Please check the error messages above."; exit 1; }
 pip install -r dev-requirements.txt || { echo "Failed to install dev requirements. Please check the error messages above."; exit 1; }
@@ -29,16 +20,12 @@ pip install -r dev-requirements.txt || { echo "Failed to install dev requirement
 <precommit>
 echo "Running ruff..."
 ruff check --fix . || { echo "Ruff check failed. Please fix the issues and try again."; exit 1; }
-
 echo "Running black..."
 black --preview . || { echo "Black formatting failed. Please check the error messages above."; exit 1; }
-
 echo "Running isort..."
 isort . || { echo "Isort failed. Please check the error messages above."; exit 1; }
-
 echo "Running pyright..."
 pyright || { echo "Pyright check failed. Please fix the type issues and try again."; exit 1; }
-
 echo "Running pytest..."
 pytest || { echo "Tests failed. Please fix the failing tests and try again."; exit 1; }
 </precommit><tools>pip install $NEW_DEPENDENCY
