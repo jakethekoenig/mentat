@@ -1,0 +1,49 @@
+<commands>
+
+
+<setup>
+python3 --version
+python3 -m venv venv || echo "Unable to create venv, using system Python"
+. venv/bin/activate || true
+python3 -m pip install --upgrade pip
+python3 -m pip install --only-binary=:all: tiktoken || echo "Failed to install tiktoken, skipping"
+python3 -m pip install -r requirements.txt || echo "Failed to install some requirements, continuing anyway"
+python3 -m pip install -r dev-requirements.txt || echo "Failed to install some dev requirements, continuing anyway"
+</setup>
+
+<precommit>
+python3 -m ruff check . || echo "Ruff check failed, please review"
+python3 -m black --check --preview . || echo "Black check failed, please format your code"
+python3 -m isort --profile black --check . || echo "Isort check failed, please sort your imports"
+python3 -m pyright || echo "Pyright check failed, please review type issues"
+python3 -m pytest || echo "Some tests failed, please review"
+</precommit><tools>pip install $NEW_DEPENDENCY
+        <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
+
+        pytest $TEST_FILE
+        <comment>Run a specific test file or test function.</comment>
+
+        pytest -k $TEST_PATTERN
+        <comment>Run tests matching a specific pattern.</comment>
+
+        black --check --preview .
+        <comment>Check if the code is formatted according to Black without making changes.</comment>
+
+        isort --profile black --check .
+        <comment>Check if imports are sorted correctly without making changes.</comment>
+
+        python setup.py sdist bdist_wheel
+        <comment>Build distribution packages.</comment>
+
+        twine upload dist/*
+        <comment>Upload distribution packages to PyPI. Make sure you have the necessary credentials.</comment>
+
+        mentat
+        <comment>Run the Mentat CLI to test the application.</comment>
+
+        cd testbed && mentat
+        <comment>Run Mentat from the testbed directory to ensure it's working correctly when installed.</comment>
+
+        python tests/license_check.py
+        <comment>Run the license checking script.</comment></tools>
+</commands>
