@@ -1,19 +1,19 @@
 <commands>
-    <setup>
-        python -m venv venv
-        source venv/bin/activate
-        pip install -e .
-        pip install -r dev-requirements.txt
-    </setup>
-    <precommit>
-        ruff check --fix .
-        black --preview .
-        isort --profile black .
-        pyright
-        pytest
-    </precommit>
-    <tools>
-        pip install $NEW_DEPENDENCY
+
+
+<setup>
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
+pip install -r dev-requirements.txt
+</setup>
+<precommit>
+ruff check --fix .
+black --preview .
+isort --profile black .
+pyright
+pytest
+</precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
         pytest -k $TEST_NAME
@@ -35,6 +35,5 @@
         <comment>Upload the built distribution packages to PyPI. Make sure you have the necessary credentials.</comment>
 
         cd testbed && mentat
-        <comment>Run Mentat from the testbed directory to ensure it's working correctly when installed.</comment>
-    </tools>
+        <comment>Run Mentat from the testbed directory to ensure it's working correctly when installed.</comment></tools>
 </commands>
