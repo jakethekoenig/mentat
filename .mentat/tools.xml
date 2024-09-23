@@ -1,19 +1,38 @@
 <commands>
-    <setup>
-        python3 -m venv .venv
-        source .venv/bin/activate
-        pip install -e .
-        pip install -r dev-requirements.txt
-    </setup>
-    <precommit>
-        ruff check --fix .
-        black --preview .
-        isort .
-        pyright
-        pytest
-    </precommit>
-    <tools>
-        pip install $NEW_DEPENDENCY
+
+
+Here's the rewritten script with the proposed fix:
+
+<setup>
+# Check if Python 3.12 is available, otherwise use Python 3
+if command -v python3.12 &> /dev/null
+then
+    PYTHON_CMD=python3.12
+else
+    PYTHON_CMD=python3
+fi
+
+# Attempt to create the virtual environment
+$PYTHON_CMD -m venv .venv
+
+# Check if venv creation was successful
+if [ ! -f .venv/bin/activate ]
+then
+    echo "Failed to create virtual environment. Please install python3-venv package and try again."
+    exit 1
+fi
+
+source .venv/bin/activate
+pip install -e .
+pip install -r dev-requirements.txt
+</setup>
+<precommit>
+ruff check --fix .
+black --preview .
+isort .
+pyright
+pytest
+</precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
         
         python setup.py sdist bdist_wheel
@@ -29,6 +48,5 @@
         <comment>Run benchmarks for a specific language (e.g., javascript or python)</comment>
         
         cd benchmarks && ./benchmark_runner.py --retries $RETRIES
-        <comment>Run real-world benchmarks</comment>
-    </tools>
+        <comment>Run real-world benchmarks</comment></tools>
 </commands>
