@@ -4,15 +4,15 @@
 Here's the revised script:
 
 <setup>
-# Check if Python is installed
 python3 --version || echo "Error: Python 3 is not installed or not in PATH. Please install Python 3 and try again."
-
-# If Python is found, proceed with the setup
+python3 -m venv .venv
+. .venv/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 python3 -m pip install -r dev-requirements.txt
 </setup>
 <precommit>
+. .venv/bin/activate
 python3 -m ruff check --fix .
 python3 -m black --preview .
 python3 -m isort .
