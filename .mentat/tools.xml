@@ -3,9 +3,11 @@
 
 <setup>
 python3 --version || echo "Error: Python 3 is not installed or not in PATH. Please install Python 3 and try again."
-python3 -m pip install --user -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install --user -r requirements.txt || python3 -m pip install --user -r <(grep -v tiktoken requirements.txt)
 python3 -m pip install --user -r dev-requirements.txt
 </setup>
+
 <precommit>
 python3 -m ruff check --fix .
 python3 -m black --preview .
