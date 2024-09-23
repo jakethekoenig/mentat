@@ -1,20 +1,4 @@
 <commands>
-
-
-<setup>
-apt update
-apt install -y python3.12-venv
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -e .
-pip install -r dev-requirements.txt
-</setup>
-<precommit>
-ruff check --fix .
-black --preview .
-isort .
-pyright
-pytest
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
         
