@@ -1,0 +1,48 @@
+<commands>
+<setup>
+apt update
+apt install -y python3 python3-pip python3-venv curl build-essential
+python3 -m venv venv
+. venv/bin/activate
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+export PATH="$HOME/.cargo/bin:$PATH"
+pip3 install -e .
+pip3 install -r dev-requirements.txt
+</setup>
+<precommit>
+ruff format .
+ruff check --fix .
+isort --profile black .
+black --preview .
+pyright
+pytest
+</precommit>
+<tools>
+pip install $NEW_DEPENDENCY
+<comment>If you use this be sure to update requirements.txt</comment>
+
+pytest $TEST_FILE
+<comment>Run a specific test file</comment>
+
+pytest -k $TEST_NAME
+<comment>Run a specific test by name</comment>
+
+python setup.py sdist bdist_wheel
+<comment>Build distribution packages</comment>
+
+twine upload dist/*
+<comment>Upload distribution packages to PyPI (requires credentials)</comment>
+
+cd testbed && mentat
+<comment>Run Mentat in the testbed directory to test the installed version</comment>
+
+python tests/license_check.py
+<comment>Run the license checking script</comment>
+
+git tag v$VERSION_NUMBER
+<comment>Create a new version tag</comment>
+
+git push origin v$VERSION_NUMBER
+<comment>Push the new version tag to remote</comment>
+</tools>
+</commands>
