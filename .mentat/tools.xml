@@ -2,17 +2,16 @@
 
 
 <setup>
-python3 -m venv venv
-. venv/bin/activate
-pip install -e .
-pip install -r dev-requirements.txt
+python3 --version
+pip3 install --user -e .
+pip3 install --user -r dev-requirements.txt
 </setup>
 <precommit>
-ruff check --fix .
-black --preview .
-isort --profile black .
-pyright
-pytest
+python3 -m ruff check --fix .
+python3 -m black --preview .
+python3 -m isort --profile black .
+python3 -m pyright
+python3 -m pytest
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>Install a new dependency. Remember to update requirements.txt or dev-requirements.txt as appropriate.</comment>
 
