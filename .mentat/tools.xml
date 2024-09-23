@@ -1,19 +1,23 @@
 <commands>
 
 
-Here's the updated script:
+Here's the revised script:
 
 <setup>
-python -m pip install --upgrade pip
-pip install -r requirements.txt || echo "Error: Failed to install requirements. If the error mentions tiktoken or Rust, please install a Rust compiler and try again."
-pip install -r dev-requirements.txt || echo "Error: Failed to install dev requirements."
+# Check if Python is installed
+python3 --version || echo "Error: Python 3 is not installed or not in PATH. Please install Python 3 and try again."
+
+# If Python is found, proceed with the setup
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
+python3 -m pip install -r dev-requirements.txt
 </setup>
 <precommit>
-ruff check --fix .
-black --preview .
-isort .
-pyright
-pytest
+python3 -m ruff check --fix .
+python3 -m black --preview .
+python3 -m isort .
+python3 -m pyright
+python3 -m pytest
 </precommit><tools>pip install $NEW_DEPENDENCY
         <comment>After installing a new dependency, update requirements.txt or dev-requirements.txt as appropriate</comment>
         
