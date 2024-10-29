@@ -61,7 +61,7 @@ async def test_config_creation():
     assert config.model == "model"
     assert config.temperature == 0.2
     assert config.maximum_context == 1
-    assert type(config.parser) == ReplacementParser
+    assert isinstance(config.parser, ReplacementParser)
     assert config.auto_context_tokens == 2000
     assert config.embedding_model == "project"
 
