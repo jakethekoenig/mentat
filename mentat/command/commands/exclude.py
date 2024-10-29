@@ -6,7 +6,8 @@ from typing_extensions import override
 from mentat.auto_completer import get_command_filename_completions
 from mentat.command.command import Command, CommandArgument
 from mentat.session_context import SESSION_CONTEXT
-from mentat.utils import get_relative_path
+from mentat.utils import get_relative_path, validate_and_format_path
+from mentat.errors import PathValidationError
 
 
 class ExcludeCommand(Command, command_name="exclude"):

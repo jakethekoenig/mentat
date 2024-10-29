@@ -7,6 +7,7 @@ from importlib import resources
 from importlib.abc import Traversable
 from pathlib import Path
 from typing import TYPE_CHECKING, AsyncIterator, List, Literal, Optional, Union
+from mentat.errors import PathValidationError
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 from openai.types.chat import ChatCompletionChunk
@@ -166,4 +167,5 @@ def validate_absolute_path(path: Path | str) -> Path:
         raise PathValidationError(f"Path {path} is not absolute.")
     if not path.exists():
         raise PathValidationError(f"Path {path} does not exist.")
+    return path
     return path
