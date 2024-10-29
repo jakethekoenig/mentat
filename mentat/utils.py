@@ -159,3 +159,11 @@ def is_file_text_encoded(abs_path: Path):
         return True
     except UnicodeDecodeError:
         return False
+
+def validate_absolute_path(path: Path | str) -> Path:
+    path = Path(path).resolve()
+    if not path.is_absolute():
+        raise PathValidationError(f"Path {path} is not absolute.")
+    if not path.exists():
+        raise PathValidationError(f"Path {path} does not exist.")
+    return path

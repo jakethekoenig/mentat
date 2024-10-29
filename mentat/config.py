@@ -34,6 +34,14 @@ class Config:
     _errors: list[str] = attr.field(factory=list)
 
     # Model specific settings
+    external_library_paths: list[str] = attr.field(
+        factory=list,
+        metadata={
+            "description": "List of absolute paths to external libraries to include in context.",
+            "auto_completions": [],  # Can be enhanced with filesystem completion if desired
+        },
+        converter=converters.optional(lambda x: list(x) if isinstance(x, list) else [x]),
+    )
     model: str = attr.field(
         default="gpt-4-0125-preview",
         metadata={"auto_completions": list(known_models.keys())},
