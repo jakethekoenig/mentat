@@ -1,20 +1,20 @@
 import os
+import tempfile
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
+from mentat.include_files import get_paths_for_directory
 
 from mentat.session import Session
 from tests.conftest import run_git_command
 
 
-@pytest.mark.asyncio
-async def test_system(mock_call_llm_api, mock_collect_user_input):
+def test_system():
     # Create a temporary file
     temp_file_name = Path("temp.py")
     with open(temp_file_name, "w") as f:
         f.write("# This is a temporary file.")
-
     mock_collect_user_input.set_stream_messages(
         [
             "Add changes to the file",
@@ -43,7 +43,7 @@ async def test_system(mock_call_llm_api, mock_collect_user_input):
 
     session = Session(cwd=Path.cwd(), paths=[temp_file_name])
     session.start()
-    await session.stream.recv(channel="client_exit")
+    session.stream.recv(channel="client_exit")
 
     # Check if the temporary file is modified as expected
     with open(temp_file_name, "r") as f:
@@ -52,24 +52,21 @@ async def test_system(mock_call_llm_api, mock_collect_user_input):
     assert content == expected_content
 
 
-@pytest.mark.asyncio
-async def test_system_exits_on_exception(mock_collect_user_input):
+def test_system_exits_on_exception():
     # if we don't catch this and shutdown properly, pytest will fail test
     # with "Task was destroyed but it is pending!"
     mock_collect_user_input.side_effect = [Exception("Something went wrong")]
 
     session = Session(cwd=Path.cwd())
     session.start()
-    await session.stream.recv(channel="session_stopped")
+    session.stream.recv(channel="session_stopped")
 
 
-@pytest.mark.asyncio
-async def test_interactive_change_selection(mock_call_llm_api, mock_collect_user_input):
+def test_interactive_change_selection():
     # Create a temporary file
     temp_file_name = Path("temp_interactive.py")
     with open(temp_file_name, "w") as f:
         f.write("# This is a temporary file for interactive test.")
-
     mock_collect_user_input.set_stream_messages(
         [
             "Add changes to the file",
@@ -122,7 +119,7 @@ async def test_interactive_change_selection(mock_call_llm_api, mock_collect_user
 
     session = Session(cwd=Path.cwd(), paths=[temp_file_name])
     session.start()
-    await session.stream.recv(channel="client_exit")
+    session.stream.recv(channel="client_exit")
 
     # Check if the temporary file is modified as expected
     with open(temp_file_name, "r") as f:
@@ -133,8 +130,7 @@ async def test_interactive_change_selection(mock_call_llm_api, mock_collect_user
 
 
 # Makes sure we're properly turning the model output into correct path no matter the os
-@pytest.mark.asyncio
-async def test_without_os_join(mock_call_llm_api, mock_collect_user_input):
+def test_without_os_join():
     temp_dir = "dir"
     temp_file_name = "temp.py"
     temp_file_path = Path(os.path.join(temp_dir, temp_file_name))
@@ -164,7 +160,7 @@ async def test_without_os_join(mock_call_llm_api, mock_collect_user_input):
         @@end""".format(file_name=fake_file_path))])
     session = Session(cwd=Path.cwd(), paths=[temp_file_path])
     session.start()
-    await session.stream.recv(channel="client_exit")
+    session.stream.recv(channel="client_exit")
     mock_collect_user_input.reset_mock()
     with open(temp_file_path, "r") as f:
         content = f.read()
@@ -172,10 +168,7 @@ async def test_without_os_join(mock_call_llm_api, mock_collect_user_input):
     assert content == expected_content
 
 
-@pytest.mark.asyncio
-async def test_sub_directory(
-    temp_testbed, mock_call_llm_api, mock_collect_user_input, monkeypatch
-):
+def test_sub_directory(temp_testbed, monkeypatch):
     with monkeypatch.context() as m:
         m.chdir("scripts")
         file_name = "calculator.py"
@@ -203,7 +196,7 @@ async def test_sub_directory(
 
         session = Session(cwd=temp_testbed, paths=[Path("scripts", file_name)])
         session.start()
-        await session.stream.recv(channel="client_exit")
+        session.stream.recv(channel="client_exit")
 
         # Check if the temporary file is modified as expected
         with open(file_name, "r") as f:
@@ -212,15 +205,13 @@ async def test_sub_directory(
         assert content == expected_content
 
 
-@pytest.mark.asyncio
 @pytest.mark.no_git_testbed
 @pytest.mark.clear_testbed
-async def test_recursive_git_repositories(temp_testbed, mock_collect_user_input):
+def test_recursive_git_repositories(temp_testbed):
     # Tests if a git repo inside of a git repo inside of a git repo works, from outside of a git repo
 
     dirs = ["outer", "git1", "git2", "inner1", "git3", "inner2"]
     total_path = Path(".")
-
     files = []
     for dir_name in dirs:
         file_path = total_path / (dir_name + ".txt")
@@ -245,6 +236,47 @@ async def test_recursive_git_repositories(temp_testbed, mock_collect_user_input)
 
     session = Session(cwd=temp_testbed, paths=[Path(".")])
     session.start()
-    await session.stream.recv(channel="client_exit")
+    session.stream.recv(channel="client_exit")
 
     assert set(session.ctx.code_context.include_files.keys()) == set(files)
+
+
+def test_symlink_handling():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        file_path = temp_dir_path / "file.txt"
+        symlink_path = temp_dir_path / "symlink.txt"
+        
+        # Create a regular file
+        with open(file_path, "w") as f:
+            f.write("This is a test file.")
+        
+        # Create a symlink to the regular file
+        os.symlink(file_path, symlink_path)
+        
+        # Test the function that should handle symlinks
+        paths = get_paths_for_directory(temp_dir_path)
+        
+        # Assert that both the file and the symlink are included
+        assert file_path.resolve() in paths
+        assert symlink_path.resolve() in paths
+
+
+def test_symlink_loop_handling():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        dir_path = temp_dir_path / "dir"
+        symlink_path = dir_path / "symlink"
+        
+        # Create a directory
+        os.mkdir(dir_path)
+        
+        # Create a symlink that points to its own parent directory (loop)
+        os.symlink(dir_path, symlink_path)
+        
+        # Test the function that should handle symlinks
+        paths = get_paths_for_directory(temp_dir_path)
+        
+        # Assert that the function does not enter an infinite loop
+        assert dir_path.resolve() in paths
+        assert symlink_path.resolve() not in paths  # Should not follow the loop

@@ -47,6 +47,7 @@ async def test_config_creation():
             "embedding_model": "project"
         }"""))
 
+    assert isinstance(config.parser, ReplacementParser)
     mentat.config.user_config_path = Path(str(config_file_name) + "1")
     with open(mentat.config.user_config_path, "w") as user_config_file:
         user_config_file.write(dedent("""\
