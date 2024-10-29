@@ -57,6 +57,7 @@ class CodeContext:
         diff: Optional[str] = None,
         pr_diff: Optional[str] = None,
         ignore_patterns: Iterable[Path | str] = [],
+        external_library_paths: Optional[Iterable[Path | str]] = None,
     ):
         self.git_root = git_root
         self.diff = diff
@@ -290,7 +291,7 @@ class CodeContext:
         - Glob pattern: all files that match the glob pattern are added to the context
 
         Args:
-            `path`: can be a relative or absolute file path, file interval path, directory, or glob pattern.
+            `path`: can be a relative or absolute file path, file interval path, directory, glob pattern, or external library path.
 
         Return:
             A set of paths that have been successfully included in the context

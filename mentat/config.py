@@ -33,7 +33,15 @@ bool_autocomplete = ["True", "False"]
 class Config:
     _errors: list[str] = attr.field(factory=list)
 
-    # Model specific settings
+    # External libraries
+    external_library_paths: list[str] = attr.field(
+        factory=list,
+        metadata={
+            "description": "List of absolute paths to external libraries to include in context.",
+            "auto_completions": [],  # Optionally implement filesystem path completions
+        },
+        converter=converters.optional(lambda x: list(x) if isinstance(x, list) else [x]),
+    )
     model: str = attr.field(
         default="gpt-4-0125-preview",
         metadata={"auto_completions": list(known_models.keys())},

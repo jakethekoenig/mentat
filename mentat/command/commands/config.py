@@ -55,6 +55,7 @@ class ConfigCommand(Command, command_name="config"):
         return [
             CommandArgument("required", "setting"),
             CommandArgument("optional", "value"),
+            CommandArgument("optional", "external-library-paths"),
         ]
 
     @override

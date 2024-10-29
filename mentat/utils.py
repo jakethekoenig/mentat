@@ -7,6 +7,7 @@ from importlib import resources
 from importlib.abc import Traversable
 from pathlib import Path
 from typing import TYPE_CHECKING, AsyncIterator, List, Literal, Optional, Union
+from mentat.errors import PathValidationError
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 from openai.types.chat import ChatCompletionChunk
@@ -159,3 +160,45 @@ def is_file_text_encoded(abs_path: Path):
         return True
     except UnicodeDecodeError:
         return False
+
+def validate_and_format_path(
+    path: Path | str, cwd: Path, check_for_text: bool = True
+) -> Path:
+    """Validate and format a path.
+
+    Args:
+        `path` - A file path, file interval path, directory path, or a glob pattern
+        `check_for_text` - Check if the file can be opened. Default to True
+
+    Return:
+        An absolute path
+    """
+    path = Path(path)
+
+    # Resolve ~
+    try:
+        path = path.expanduser()
+    except RuntimeError as e:
+        raise PathValidationError(f"Error expanding path {path}: {e}")
+
+    # Get absolute path
+    if path.is_absolute():
+        abs_path = path
+    else:
+        abs_path = cwd / path
+
+    # Resolve path (remove any '..' or symlinks)
+    abs_path = abs_path.resolve()
+
+    # Validate path
+    match get_path_type(abs_path):
+        case PathType.FILE:
+            validate_file_path(abs_path, check_for_text)
+        case PathType.FILE_INTERVAL:
+            validate_file_interval_path(abs_path, check_for_text)
+        case PathType.DIRECTORY:
+            pass
+        case PathType.GLOB:
+            validate_glob_path(abs_path)
+
+    return abs_path

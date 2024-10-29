@@ -18,6 +18,12 @@ class SampleCommand(Command, command_name="sample"):
         stream = session_context.stream
         try:
             sample = await sampler.create_sample()
+            # Ensure external libraries are included in sampling
+            external_features = [
+                feature for feature in session_context.code_context.auto_features
+                if feature.path in session_context.config.external_library_paths
+            ]
+            sample.features.extend(external_features)
         except SampleError as e:
             stream.send(f"Failed to generate sample: {e}", style="error")
             return

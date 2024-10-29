@@ -142,7 +142,7 @@ def validate_and_format_path(
 
 
 def match_path_with_patterns(path: Path, patterns: Set[Path]) -> bool:
-    """Check if the given absolute path matches any of the patterns.
+    """Check if the given absolute path matches any of the patterns, including external libraries.
 
     Args:
         `path` - An absolute path
