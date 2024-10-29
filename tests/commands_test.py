@@ -172,7 +172,6 @@ async def test_redo_command(temp_testbed, mock_collect_user_input, mock_call_llm
         # External library included
         @@end
     """)])
-        """)])
 
     session = Session(cwd=Path.cwd(), paths=[temp_file_name])
     session.start()

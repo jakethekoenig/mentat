@@ -282,7 +282,10 @@ class CodeContext:
         return included_paths
 
     def include(
-        self, path: Path | str, exclude_patterns: Iterable[Path | str] = [], external: bool = False  # Added 'external' parameter
+        self,
+        path: Path | str,
+        exclude_patterns: Iterable[Path | str] = [],
+        external: bool = False,  # Added 'external' parameter
     ) -> Set[Path]:
         """
         Add paths to the context
@@ -330,7 +333,9 @@ class CodeContext:
             session_context.stream.send(str(e), style="error")
             return set()
 
-        return self.include_features(code_features, external=external)  # Passed 'external' flag
+        return self.include_features(
+            code_features, external=external
+        )  # Passed 'external' flag
 
     def _exclude_file(self, path: Path) -> Path | None:
         session_context = SESSION_CONTEXT.get()
