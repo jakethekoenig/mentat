@@ -5,7 +5,7 @@ skip = ["vscode/bundled", "benchmarks/benchmark_repos", "testbed/exercism-python
 
 [tool.ruff]
 line-length = 120
-ignore = ["E731"]
+lint.ignore = ["E731"]
 
 [tool.pytest.ini_options]
 addopts = "--ignore=vscode/bundled --ignore=benchmarks/benchmark_repos --ignore=testbed/exercism-python"
