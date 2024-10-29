@@ -3,6 +3,28 @@ Configuration
 
 Mentat has a number of customizable settings. They can be changed globally by setting in :code:`~/.mentat/.mentat_config.json` or on a per project level by setting in :code:`.mentat_config.json`. They can also be set as a command line flag, see :ref:`cli_args`, note underscores become dashes on the cli. Finally they can be changed mid-session with the :code:`/config` command.
 
+.. _external_library_paths:
+
+External Library Paths
+======================
+
+You can specify external libraries to include in Mentat's context by adding their absolute paths to the `external_library_paths` configuration setting.
+
+**Example:**
+
+.. code-block:: json
+
+   {
+       "external_library_paths": [
+           "/usr/local/lib/python3.9/site-packages/external_lib"
+       ]
+   }
+
+**Using the CLI:**
+
+.. code-block:: bash
+
+   /config external_library_paths /usr/local/lib/python3.9/site-packages/external_lib
 The following is a partial list of customizable settings.
 
 Settings

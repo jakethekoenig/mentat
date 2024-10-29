@@ -27,7 +27,7 @@ class IncludeCommand(Command, command_name="include"):
     @override
     @classmethod
     def arguments(cls) -> List[CommandArgument]:
-        return [CommandArgument("required", ["path", "glob pattern"], repeatable=True)]
+        return [CommandArgument("required", ["path", "glob pattern", "external library"], repeatable=True)]
 
     @override
     @classmethod

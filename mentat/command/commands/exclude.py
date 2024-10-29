@@ -20,10 +20,14 @@ class ExcludeCommand(Command, command_name="exclude"):
             stream.send("No files specified", style="warning")
             return
         for file_path in args:
-            excluded_paths = code_context.exclude(file_path)
-            for excluded_path in excluded_paths:
-                rel_path = get_relative_path(excluded_path, session_context.cwd)
-                stream.send(f"{rel_path} removed from context", style="error")
+            try:
+                abs_path = validate_and_format_path(file_path, session_context.cwd, check_for_text=False)
+                excluded_paths = code_context.exclude(abs_path)
+                for excluded_path in excluded_paths:
+                    rel_path = get_relative_path(excluded_path, session_context.cwd)
+                    stream.send(f"{rel_path} removed from context", style="error")
+            except PathValidationError as e:
+                stream.send(str(e), style="error")
 
     @override
     @classmethod
