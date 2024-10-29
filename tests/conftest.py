@@ -284,6 +284,17 @@ def add_permissions(func, path, exc_info):
         raise
 
 
+@pytest.fixture
+def create_symlink():
+    def _create_symlink(source: Path, link_name: Path):
+        try:
+            os.symlink(source, link_name)
+        except OSError as e:
+            pytest.skip(f"Symlink creation failed: {e}")
+
+    return _create_symlink
+
+
 @pytest.fixture(autouse=True)
 def temp_testbed(monkeypatch, get_marks):
     # Allow us to run tests from any directory
@@ -318,6 +329,13 @@ def temp_testbed(monkeypatch, get_marks):
     with monkeypatch.context() as m:
         m.chdir(temp_testbed)
         yield Path(temp_testbed)
+
+    # Cleanup symlinks if any
+    for root, dirs, files in os.walk(temp_testbed, topdown=False):
+        for name in files + dirs:
+            path = Path(root) / name
+            if path.is_symlink():
+                path.unlink()
 
     shutil.rmtree(temp_dir, onerror=add_permissions)
 
