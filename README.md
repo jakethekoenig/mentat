@@ -73,9 +73,9 @@ If you want to use a models through Azure, Ollama or other service see [this doc
 
 Run Mentat from within your project directory. Mentat uses git, so if your project doesn't already have git set up, run `git init`. Then you can run Mentat with:
 
-`mentat <paths to files or directories>`
+`mentat <paths to files or directories> [--external]`
 
-List the files you would like Mentat to read and edit as arguments. Mentat will add each of them to context, so be careful not to exceed the GPT-4 token context limit. To add multiple files at once, you can also provide directories as arguments. When a directory is provided, Mentat will add all the contained files, except for ones ignored in your `.gitignore`. In addition to files and directories, you can use [glob patterns](https://docs.python.org/3/library/glob.html) to add multiple files at once.
+List the files you would like Mentat to read and edit as arguments. Mentat will add each of them to context, so be careful not to exceed the GPT-4 token context limit. To add multiple files at once, you can also provide directories as arguments. When a directory is provided, Mentat will add all the contained files, except for ones ignored in your `.gitignore`. In addition to files and directories, you can use [glob patterns](https://docs.python.org/3/library/glob.html) to add multiple files at once. Use the `--external` flag to include external library paths located outside the current project directory.
 
 For more information on commands, configuration or using other models see [the documentation](https://docs.mentat.ai/en/latest/user/guides.html).
 
