@@ -163,6 +163,15 @@ async def test_redo_command(temp_testbed, mock_collect_user_input, mock_call_llm
         @@code
         # I created this file
         @@end
+        @@start
+        {{
+            "file": "/usr/local/lib/ruby/gems/2.7.0/gems/eth_utils/lib/eth/utils.rb",
+            "action": "include-external"
+        }}
+        @@code
+        # External library included
+        @@end
+    """)])
         """)])
 
     session = Session(cwd=Path.cwd(), paths=[temp_file_name])

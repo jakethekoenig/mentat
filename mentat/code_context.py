@@ -131,6 +131,13 @@ class CodeContext:
         )
         ctx.stream.send(json.dumps(data), channel="context_update")
 
+        code_message += ["Code Files:\n"]
+        for path, features in self.include_files.items():
+            if any(feature.external for feature in features):
+                code_message.append(f"{str(path)} (External)")
+            else:
+                code_message.append(str(path))
+
     async def get_code_message(
         self,
         prompt_tokens: int,
@@ -275,7 +282,7 @@ class CodeContext:
         return included_paths
 
     def include(
-        self, path: Path | str, exclude_patterns: Iterable[Path | str] = []
+        self, path: Path | str, exclude_patterns: Iterable[Path | str] = [], external: bool = False  # Added 'external' parameter
     ) -> Set[Path]:
         """
         Add paths to the context
@@ -323,7 +330,7 @@ class CodeContext:
             session_context.stream.send(str(e), style="error")
             return set()
 
-        return self.include_features(code_features)
+        return self.include_features(code_features, external=external)  # Passed 'external' flag
 
     def _exclude_file(self, path: Path) -> Path | None:
         session_context = SESSION_CONTEXT.get()
